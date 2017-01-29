@@ -1,0 +1,41 @@
+{
+  "name": "tfc",
+  "version": "0.0.0",
+  "description": "Test Framework for chatbot",
+  "homepage": "https://github.com/Oupsla/TFC",
+  "author": {
+    "name": "Oupsla",
+    "email": "nicolas_delperdange@hotmail.com",
+    "url": "https://github.com/Oupsla"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Oupsla/TFC.git"
+  },
+  "main": "index.js",
+  "eslintConfig": {
+    "extends": "xo-space",
+    "env": {
+      "mocha": true
+    }
+  },
+  "scripts": {
+    "test": "istanbul cover node_modules/.bin/_mocha test/*.js",
+    "coveralls": "cat coverage/lcov.info | node_modules/.bin/coveralls"
+  },
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "facebook-chat-api": "^1.2.0",
+    "lodash": "^4.16.4"
+  },
+  "devDependencies": {
+    "eslint": "^3.1.1",
+    "eslint-config-xo-space": "^0.15.0",
+    "chai": "^3.5.0",
+    "coveralls": "^2.11.15",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.1.2",
+    "sinon": "^1.17.6"
+  }
+}
