@@ -1,9 +1,13 @@
-const login     = require("facebook-chat-api");
-const Promise   = require('bluebird');
+const Bluebird   = require('bluebird');
+const login     = Bluebird.promisify(require("facebook-chat-api"));
 const config    = require('./config');
 const fs        = require('fs');
+const exampleTests = require('./exampleTest.json');
+const assert    = require('assert');
+const chalk    = require('chalk');
+const time = require('exectimer');
 
-Promise.promisifyAll(fs);
+Bluebird.promisifyAll(fs);
 
 function executeTest(jsonInput) {
 
@@ -13,25 +17,22 @@ function executeTest(jsonInput) {
 
   console.log("Facebook pageId : " + pageId);
 
-  login({email: email, password: password}, function callback (err, api) {
-      if(err) return console.error(err);
-
+  return login({ email, password })
+    .then((api) => {
+      Bluebird.promisifyAll(api);
       api.setOptions({
         logLevel: "silent"
       });
 
-      Promise.each(jsonInput.tests, function(test) {
-          console.log("Test : " + test.testTitle);
-          console.log("question : " + test.question);
-
-          return new Promise(function (resolve, reject){
-            api.sendMessage(test.question, pageId);
-            let stopListening = api.listen(function(err, event) {
-              console.log(event.body);
-              stopListening();
-              resolve();
+      return Bluebird.each(jsonInput.tests, function(test) {
+          return listenResponse(api, test, pageId)
+            .then((resp) => {
+              console.log(chalk.green(resp.message));
+            })
+            .catch((err) => {
+              console.log(chalk.red(`${err.message} --> FAILED`));
+              return Bluebird.reject(err);
             });
-          });
       });
   });
 }
@@ -40,24 +41,48 @@ function verifyJson(parsedJSON) {
   return true;
 }
 
+function listenResponse(api, test, pageId) {
+  let tick = new time.Tick("begin");
+  tick.start();
+  return new Bluebird((resolve, reject) => {
+    api.sendMessage(test.question, pageId);
+    let stopListening = api.listen(function(err, event) {
+      if (err) {
+        return reject(err);
+      }
+
+      if (event.type === 'message') {
+        tick.stop();
+        stopListening();
+        //TIME IN NANOSECONDS
+        if (test.responses.indexOf(event.body) === -1) {
+          reject({message: `[${test.question}] haven't good answer [${event.body}]`, question: test.question, response: event.body, time: time.timers.begin.duration(), state: 1});
+        } else {
+          resolve({message: `[${test.testTitle}] --> PASS`, question: test.question, response: event.body, time: time.timers.begin.duration(), state: 0});
+        }
+      }
+    });
+  });
+}
+
 function main() {
 
-  fs.readFileAsync("./exampleTest.json")
-  .then(JSON.parse)
-  .then((jsonParsed) => {
-    if(verifyJson(jsonParsed))
-      executeTest(jsonParsed);
-    else
-      Promise.reject("Wrong Json format");
-  })
-  .catch(SyntaxError, function (e) {
-      console.error("invalid json in file");
-  })
-  .catch(function (e) {
-      console.error("unable to read file");
-  });
+  executeTest(exampleTests)
+    .then((resp) => console.log(resp))
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    });
 
 
 }
 
 return main();
+
+
+// {
+//   question: "",
+//   questionTitle: "",
+//   executionTime: "",
+//   response: ""
+// }
