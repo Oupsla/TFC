@@ -1,19 +1,11 @@
 const Bluebird        = require('bluebird');
 const login           = Bluebird.promisify(require("facebook-chat-api"));
-const config          = require('../config');
-const fs              = require('fs');
-const exampleTests    = require('../test/exampleTest.json');
 const assert          = require('assert');
 const chalk           = require('chalk');
 const time            = require('exectimer');
-const commandLineArgs = require('command-line-args');
-const optionDefinitions = [
-  { name: 'verbose', alias: 'v', type: Boolean },
-  { name: 'src', type: String, defaultOption: true},
-];
-const options = commandLineArgs(optionDefinitions)
+const config          = require('./config/config');
 
-Bluebird.promisifyAll(fs);
+let options;
 
 function executeTest(jsonInput) {
 
@@ -76,7 +68,7 @@ function readFile(fileName) {
       let content = require(fileName);
       resolve(content);
     } catch (e) {
-      reject("Cannot find file : " + fileName);
+      reject("Error : Cannot find file : " + fileName);
     }
   });
 }
@@ -95,12 +87,9 @@ function verifyJson(parsedJSON) {
   });
 }
 
-function main() {
-  
-  if(!options.src){
-    console.error("Error : You have to specify a config file (.json)");
-    process.exit(1);
-  }
+function run(opts) {
+
+  options = opts;
 
   readFile(options.src)
     .then((content) => verifyJson(content))
@@ -112,12 +101,9 @@ function main() {
     });
 }
 
-return main();
-
-
-// {
-//   question: "",
-//   questionTitle: "",
-//   executionTime: "",
-//   response: ""
-// }
+module.exports = {
+    executeTest,
+    readFile,
+    verifyJson,
+    run
+};
