@@ -31,7 +31,8 @@
     "command-line-args": "^4.0.1",
     "exectimer": "^2.0.2",
     "facebook-chat-api": "^1.2.0",
-    "lodash": "^4.16.4"
+    "lodash": "^4.16.4",
+    "mongodb": "^2.2.22"
   },
   "devDependencies": {
     "eslint": "^3.1.1",
