@@ -4,12 +4,15 @@ const assert          = require('assert');
 const chalk           = require('chalk');
 const time            = require('exectimer');
 const config          = require('./config/config');
+const mongo          = require('./config/mongo');
+let db;
 const validator       = require('validator');
 
 let options;
 
 function executeTest(jsonInput) {
-
+  let metricsColl = Bluebird.promisifyAll(db.collection('metrics'));
+  let metrics = [];
   let pageId = jsonInput.pageId
   let email = config.facebook.login;
   let password = config.facebook.password;
@@ -29,13 +32,15 @@ function executeTest(jsonInput) {
           return listenResponse(api, test, pageId)
             .then((resp) => {
               console.log(chalk.green(resp.message));
+              metrics.push(resp);
             })
             .catch((err) => {
               console.log(chalk.red(`${err.message} --> FAILED`));
+              metrics.push(err);
               return Bluebird.reject(err);
             });
       });
-  });
+  }).finally(() => metricsColl.insertAsync({ metrics }));
 }
 
 function listenResponse(api, test, pageId) {
@@ -66,7 +71,7 @@ function listenResponse(api, test, pageId) {
 function readFile(fileName) {
   return new Promise(function(resolve, reject) {
     try {
-      let content = require(fileName);
+      let content = require('../' + fileName);
       resolve(content);
     } catch (e) {
       reject("Error : Cannot find file : " + fileName);
@@ -101,7 +106,11 @@ function run(opts) {
 
   options = opts;
 
-  readFile(options.src)
+  mongo('mongodb://dev:dev@ds035059.mlab.com:35059/tfc')
+    .then((dbInfos) => {
+      db = dbInfos;
+      return readFile(options.src);
+    })
     .then((content) => verifyJson(content))
     .then((content) => executeTest(content))
     .then((resp) => console.log(resp))
@@ -112,8 +121,8 @@ function run(opts) {
 }
 
 module.exports = {
-    executeTest,
-    readFile,
-    verifyJson,
-    run
+  executeTest,
+  readFile,
+  verifyJson,
+  run
 };
