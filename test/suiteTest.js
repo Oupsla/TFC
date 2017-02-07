@@ -18,7 +18,7 @@ describe('Test Suite', function () {
 
     it('should open the file', function(done){
       appRunner
-        .readFile('../test/exampleTest.json')
+        .readFile('test/exampleTest.json')
         .should.eventually.have.property("pageId")
         .notify(done);
     });

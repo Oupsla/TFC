@@ -86,15 +86,15 @@ function assertResponse(expects, actual) {
 function verifyJson(parsedJSON) {
   return new Promise(function(resolve, reject) {
     if(!validator.isAlphanumeric(parsedJSON.pageId)) {
-      reject("Error config : Wrong pageID");
+      return reject("Error config : Wrong pageID");
     }
 
     if(!validator.isBoolean("" + parsedJSON.config.stopOnError)) {
-      reject("Error config : Wrong config.stopOnError : need true of false");
+      return reject("Error config : Wrong config.stopOnError : need true of false");
     }
 
     if(!Array.isArray(parsedJSON.tests)){
-      reject("Error config : tests is not an array");
+      return reject("Error config : tests is not an array");
     }
 
 
