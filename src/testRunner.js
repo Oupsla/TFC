@@ -4,6 +4,7 @@ const assert          = require('assert');
 const chalk           = require('chalk');
 const time            = require('exectimer');
 const config          = require('./config/config');
+const validator       = require('validator');
 
 let options;
 
@@ -79,10 +80,19 @@ function assertResponse(expects, actual) {
 
 function verifyJson(parsedJSON) {
   return new Promise(function(resolve, reject) {
-    //TODO: check json parsed
-    if(false) {
-      reject("Wrong json format");
+    if(!validator.isAlphanumeric(parsedJSON.pageId)) {
+      reject("Error config : Wrong pageID");
     }
+
+    if(!validator.isBoolean("" + parsedJSON.config.stopOnError)) {
+      reject("Error config : Wrong config.stopOnError : need true of false");
+    }
+
+    if(!Array.isArray(parsedJSON.tests)){
+      reject("Error config : tests is not an array");
+    }
+
+
     resolve(parsedJSON);
   });
 }

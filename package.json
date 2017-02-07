@@ -32,7 +32,8 @@
     "exectimer": "^2.0.2",
     "facebook-chat-api": "^1.2.0",
     "lodash": "^4.16.4",
-    "mongodb": "^2.2.22"
+    "mongodb": "^2.2.22",
+    "validator": "^6.2.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",

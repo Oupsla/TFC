@@ -9,6 +9,8 @@ chai.use(chaiAsPromised);
 chai.should();
 
 const appRunner = require('../src/testRunner.js');
+const sampleConfig = require('../test/exampleTest.json');
+const wrongConfig = require('../test/wrongConfig.json');
 
 describe('Test Suite', function () {
 
@@ -25,6 +27,20 @@ describe('Test Suite', function () {
     it('should reject cause the file don\'t exist', function(done){
       appRunner
         .readFile('../test/exampleDontExist.json')
+        .should.be.rejected
+        .notify(done);
+    });
+
+    it('should validate the json config', function(done){
+      appRunner
+        .verifyJson(sampleConfig)
+        .should.be.fulfilled
+        .notify(done);
+    });
+
+    it('should validate the json config', function(done){
+      appRunner
+        .verifyJson(wrongConfig)
         .should.be.rejected
         .notify(done);
     });
