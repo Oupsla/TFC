@@ -1,0 +1,23 @@
+{
+  "pageId" : "240763399694585",
+  "config": {
+    "stopOnError": "test"
+  },
+  "tests" :
+  [
+    {
+      "testTitle" : "It should connect me",
+      "question" : "Coucou !",
+      "responses" : [
+        "Bonjour, que puis-je faire pour t'aider ? Si tu veux plus d'informations visite ce site https://bnjjj.github.io/talk-to-my-car-website/"
+      ]
+    },
+    {
+      "testTitle" : "It should fails",
+      "question" : "Comment vas-tu ?",
+      "responses" : [
+        "Tous les capteurs sont ok !"
+      ]
+    }
+  ]
+}

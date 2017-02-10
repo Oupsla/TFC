@@ -1,71 +1,60 @@
-const Bluebird        = require('bluebird');
-const login           = Bluebird.promisify(require("facebook-chat-api"));
 const assert          = require('assert');
 const chalk           = require('chalk');
 const time            = require('exectimer');
 const config          = require('./config/config');
 const mongo          = require('./config/mongo');
-let db;
 const validator       = require('validator');
+const Bluebird        = require('bluebird');
 
+
+// You can change the type of chatbot here
+let apiFacade = require('./messengerFacade');
+let db;
 let options;
 
-function executeTest(jsonInput) {
+function executeTest(jsonInput){
+
   let metricsColl = Bluebird.promisifyAll(db.collection('metrics'));
   let metrics = [];
-  let pageId = jsonInput.pageId
-  let email = config.facebook.login;
-  let password = config.facebook.password;
 
-  if(options.verbose) {
-    console.log("Facebook pageId : " + pageId);
-  }
-
-  return login({ email, password })
+  return apiFacade.getApi(jsonInput, config)
     .then((api) => {
-      Bluebird.promisifyAll(api);
-      api.setOptions({
-        logLevel: "silent"
-      });
-
-      return Bluebird.each(jsonInput.tests, function(test) {
-          return listenResponse(api, test, pageId)
-            .then((resp) => {
+        if(options.verbose) {
+          console.log("Connected to api. Starting tests...");
+        }
+        return Bluebird.each(jsonInput.tests, function(test) {
+          return apiFacade.listenResponse(api, test, jsonInput.pageId)
+          .then((resp) => {
+            if(assertResponse(test.responses, resp.response)){
+              resp.state = 0;
+              resp.message = `[${test.testTitle}] --> PASS`;
               console.log(chalk.green(resp.message));
               metrics.push(resp);
-            })
-            .catch((err) => {
-              console.log(chalk.red(`${err.message} --> FAILED`));
-              metrics.push(err);
-              return Bluebird.reject(err);
-            });
-      });
-  }).finally(() => metricsColl.insertAsync({ metrics }));
-}
-
-function listenResponse(api, test, pageId) {
-  let tick = new time.Tick("begin");
-  tick.start();
-  return new Bluebird((resolve, reject) => {
-    api.sendMessage(test.question, pageId);
-    let stopListening = api.listen(function(err, event) {
-      if (err) {
-        return reject(err);
+              return Bluebird.resolve(resp);
+            } else {
+              resp.state = 1;
+              resp.message = `[${resp.question}] haven't good answer [${resp.response}]`;
+              console.log(chalk.red(`${resp.message} --> FAILED`));
+              metrics.push(resp);
+              if(jsonInput.config.stopOnError === true)
+                return Bluebird.reject(resp);
+              else
+                return Bluebird.resolve(resp);
+            }
+          });
+        })
+        .catch((err) => {
+          if(options.verbose) {
+            console.log("Test failed and stopOnError activated. Stopping...");
+          }
+        });
+    }).finally(() => {
+      if(options.verbose) {
+        console.log("Sending metrics to db...");
       }
-
-      if (event.type === 'message') {
-        tick.stop();
-        stopListening();
-        //TIME IN NANOSECONDS
-        if(assertResponse(test.responses, event.body)){
-          resolve({message: `[${test.testTitle}] --> PASS`, question: test.question, response: event.body, time: time.timers.begin.duration(), state: 0});
-        } else {
-          reject({message: `[${test.question}] haven't good answer [${event.body}]`, question: test.question, response: event.body, time: time.timers.begin.duration(), state: 1});
-
-        }
-      }
+      return metricsColl.insertAsync({ metrics })
     });
-  });
+
 }
 
 function readFile(fileName) {
@@ -85,18 +74,21 @@ function assertResponse(expects, actual) {
 
 function verifyJson(parsedJSON) {
   return new Promise(function(resolve, reject) {
-    if(!validator.isAlphanumeric(parsedJSON.pageId)) {
+
+    if(!parsedJSON.pageId
+      || !validator.isAlphanumeric("" + parsedJSON.pageId)) {;
       return reject("Error config : Wrong pageID");
     }
 
-    if(!validator.isBoolean("" + parsedJSON.config.stopOnError)) {
-      return reject("Error config : Wrong config.stopOnError : need true of false");
+    if(parsedJSON.config.stopOnError === undefined
+      || !(parsedJSON.config.stopOnError === true || parsedJSON.config.stopOnError === false)) {
+      return reject("Error config : Wrong config.stopOnError : need true of false as value");
     }
 
-    if(!Array.isArray(parsedJSON.tests)){
+    if(!parsedJSON.tests
+      || !Array.isArray(parsedJSON.tests)){
       return reject("Error config : tests is not an array");
     }
-
 
     resolve(parsedJSON);
   });
@@ -113,7 +105,12 @@ function run(opts) {
     })
     .then((content) => verifyJson(content))
     .then((content) => executeTest(content))
-    .then((resp) => console.log(resp))
+    .then((resp) => {
+      if(options.verbose) {
+        console.log("Exiting..");
+      }
+      process.exit(0);
+    })
     .catch((e) => {
       console.error(e);
       process.exit(1);
@@ -121,8 +118,8 @@ function run(opts) {
 }
 
 module.exports = {
-  executeTest,
   readFile,
   verifyJson,
+  assertResponse,
   run
 };

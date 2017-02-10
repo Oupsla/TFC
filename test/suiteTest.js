@@ -9,10 +9,13 @@ chai.use(chaiAsPromised);
 chai.should();
 
 const appRunner = require('../src/testRunner.js');
-const sampleConfig = require('../test/exampleTest.json');
-const wrongConfig = require('../test/wrongConfig.json');
 
 describe('Test Suite', function () {
+
+  const sampleConfig = require('../test/exampleTest.json');
+  const wrongConfig = require('../test/wrongConfig.json');
+  const wrongConfig2 = require('../test/wrongConfig2.json');
+  const wrongConfig3 = require('../test/wrongConfig3.json');
 
   describe('Read and Validate config file', function () {
 
@@ -38,13 +41,49 @@ describe('Test Suite', function () {
         .notify(done);
     });
 
-    it('should validate the json config', function(done){
+    it('should unvalidate the json config (undefined pageId)', function(done){
       appRunner
         .verifyJson(wrongConfig)
         .should.be.rejected
         .notify(done);
     });
 
+    it('should unvalidate the json config 2 (wrong config.stopOnError)', function(done){
+      appRunner
+        .verifyJson(wrongConfig2)
+        .should.be.rejected
+        .notify(done);
+    });
+
+    it('should unvalidate the json config 3 (undefined tests)', function(done){
+      appRunner
+        .verifyJson(wrongConfig3)
+        .should.be.rejected
+        .notify(done);
+    });
+
+
+  });
+
+  describe('Assert Tests', function () {
+
+    const expectResponses = ['Coucou' , 'Salut', 'Hello'];
+    const goodResponse = 'Coucou';
+    const badResponse = 'Olé';
+
+    it('should assert this response', function(done){
+      var result = appRunner
+        .assertResponse(expectResponses, goodResponse)
+      assert.equal(result, true);
+      done();
+    });
+
+    it('should refuse this response', function(done){
+      var result = appRunner
+        .assertResponse(expectResponses, badResponse)
+      assert.equal(result, false);
+      done();
+    });
 
   });
 

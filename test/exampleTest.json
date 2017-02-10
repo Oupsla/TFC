@@ -1,23 +1,25 @@
  {
   "pageId" : "240763399694585",
   "config": {
-    "stopOnError": false
+    "stopOnError": true
   },
   "tests" :
   [
     {
-      "testTitle" : "It should connect me",
-      "question" : "Coucou !",
+      "testTitle" : "It should ask if captors are ok",
+      "question" : "Comment vas-tu ?",
       "responses" : [
-        "Bonjour, que puis-je faire pour t'aider ? Si tu veux plus d'informations visite ce site https://bnjjj.github.io/talk-to-my-car-website/"
+        "Tous les capteurs sont ok !",
+        "Tout va bien, aucun soucis à déclarer 👍 🤗"
       ]
     },
     {
-      "testTitle" : "It should fails",
-      "question" : "Comment vas-tu ?",
+      "testTitle" : "It should connect me",
+      "question" : "Coucou !",
       "responses" : [
-        "Tous les capteurs sont ok !"
+        "Bonjour, que puis-je faire pour t'aider ? Si tu veux plus d'informations visite ce site http://talk-to-my-car.com"
       ]
     }
+
   ]
 }
