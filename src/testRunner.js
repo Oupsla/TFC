@@ -2,6 +2,7 @@ const chalk           = require('chalk');
 const time            = require('exectimer');
 const config          = require('./config/config');
 const mongo           = require('./config/mongo');
+const view           = require('./view/monitor');
 const validator       = require('validator');
 const Bluebird        = require('bluebird');
 
@@ -24,6 +25,7 @@ function executeTest(jsonInput){
         return Bluebird.each(jsonInput.tests, function(test) {
           return apiFacade.listenResponse(api, test, jsonInput.pageId)
           .then((resp) => {
+            resp.date = new Date();
             if(assertResponse(test.responses, resp.response)){
               resp.state = 0;
               resp.message = `[${test.testTitle}] --> PASS`;
@@ -97,7 +99,7 @@ function run(opts) {
 
   options = opts;
 
-  mongo('mongodb://dev:dev@ds035059.mlab.com:35059/tfc')
+  mongo(config.mongo.url)
     .then((dbInfos) => {
       db = dbInfos;
       return readFile(options.src);

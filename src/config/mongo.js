@@ -11,7 +11,7 @@ module.exports = (url) => {
       }
 
       let dbAsync = Bluebird.promisifyAll(db);
-      console.log("Connected successfully to mongo server");
+      // console.log("Connected successfully to mongo server");
 
       process.on('SIGTERM', function () {
         db.close();
