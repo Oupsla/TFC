@@ -1,8 +1,7 @@
-const assert          = require('assert');
 const chalk           = require('chalk');
 const time            = require('exectimer');
 const config          = require('./config/config');
-const mongo          = require('./config/mongo');
+const mongo           = require('./config/mongo');
 const validator       = require('validator');
 const Bluebird        = require('bluebird');
 

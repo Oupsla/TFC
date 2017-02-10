@@ -1,4 +1,4 @@
 instrumentation:
     root: .
     default-excludes: true
-    excludes: ['index.js', 'src/messengerFacade.js']
+    excludes: ['index.js', 'src/messengerFacade.js', 'src/config/**']

@@ -25,13 +25,25 @@ Mais ceux-ci ne permettent pas de se mettre à la place de l'utilisateur et de t
 C'est à travers ce projet (TFC) que nous avons voulu agir et développer un framework de test End-To-End (de bout en bout) qui se propose de monitorer et tester n'importe quel chatbot.
 
 Notre but principal est donc de proposer un système de test pour chatbot.
-Celui-ci doit accepter un ensemble de tests à effectuer (sous la même forme que de tests unitaires avec la question à poser et les réponses attendues) ainsi qu'une configuration minimale permettant de cible un chatbot précis.  
+Celui-ci doit accepter un ensemble de tests à effectuer (sous la même forme que de tests unitaires avec la question à poser et les réponses attendues) ainsi qu'une configuration minimale permettant de cibler un chatbot précis.  
 
 ## Travail technique
 
-Ce travail est pour le moment au stade de *Proof-of-concept*, c'est pour cela que nous avons décidé de nous limiter aux chatbots disponibles seulement sur Messenger (voir la partie Limitation pour plus d'informations).  
+*Remarque : Ce travail est pour le moment au stade de Proof-of-concept, c'est pour cela que nous avons décidé de nous limiter aux chatbots disponibles seulement sur Messenger (voir la partie Limitation pour plus d'informations). *
 
-Nous avons développer notre framework de test sous *NodeJs* et nous avons pu grâce à ce choix profiter de plusieurs avantages comme la réutilisation de package existant pour pouvoir dialoguer facilement aux utilisateurs et autres chatbots sur Messenger.
+### Architecture
+Nous avons développé notre framework de test sous *NodeJs*. Nous avons découpé notre projet de la façon suivante :
+
+- `testRunner.js`, qui est le coeur de notre framework et s'occupe d'initialiser le système et de vérifier les réponses des chatbots.
+- Les façades des plateformes (`messengerFacade.js` par exemple) : qui s'occupe de tous les appels vers les API afin d'envoyer des messages aux chatbots et de récupérer leurs réponses.
+
+Nous avons opté de découper notre code de cette façon afin de pouvoir facilement rajouter de nouvelles façade vers d'autres plateformes (Slack, Cisco Spark, ...). Il suffit simplement de récrire deux méthodes (une de connexion et une d'envoi/réception de message) afin de rajouter la compatibilité vers une nouvelle plateforme.
+
+Nous avons également utilisé de nombreux packages **npm** afin de diminuer notre travail :
+- Bluebird : librairie permettant d'utiliser des 'promises' (système asynchrone) **[[1]](#référence)**
+- validator : librairie de validation de paramètres **[[2]](#référence)**
+- time : librairie de mesure de performance **[[3]](#référence)**
+- facebook-chat-api : librairie permettant d'utiliser facilement l'API de messenger **[[4]](#référence)**
 
 ## Evaluation
 
@@ -44,3 +56,10 @@ Pour le moment notre framework de test se limite aux chatbots Messenger mais il 
 ## Conclusion
 
 ## Référence
+- [1] Bluebird : https://github.com/petkaantonov/bluebird
+- [2] validator : https://github.com/chriso/validator.js
+- [3] time : https://github.com/TooTallNate/node-time
+- [4] facebook-chat-api : https://github.com/Schmavery/facebook-chat-api
+- [10] Istanbul : https://github.com/gotwarlost/istanbul
+- [11] Mocha : https://mochajs.org/
+- [12] Travis CI : https://travis-ci.org
