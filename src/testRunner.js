@@ -70,7 +70,6 @@ function readFile(fileName) {
 }
 
 function assertResponse(expects, actual) {
-  console.log(actual);
   let correct = false;
 
   expects.forEach((expecting) => {
@@ -80,8 +79,6 @@ function assertResponse(expects, actual) {
       correct = true;
     }
   });
-
-  console.log(correct);
 
   return correct;
 }
