@@ -66,7 +66,7 @@ Liste des dépendances **npm** du projet :
     }
     sendMetrics() // Envois des métriques en db pour visualisation future
 ```
-![Workflow](http://img15.hostingpics.net/pics/710624flc.png)  
+![Workflow](http://img15.hostingpics.net/pics/659900monitor.png)  
 
 
 ### Utilisation
