@@ -70,7 +70,20 @@ function readFile(fileName) {
 }
 
 function assertResponse(expects, actual) {
-  return expects.indexOf(actual) !== -1 ;
+  console.log(actual);
+  let correct = false;
+
+  expects.forEach((expecting) => {
+    let rx = new RegExp(expecting.replace("%%", ".*"), "i");
+
+    if (actual.match(rx)) {
+      correct = true;
+    }
+  });
+
+  console.log(correct);
+
+  return correct;
 }
 
 function verifyJson(parsedJSON) {

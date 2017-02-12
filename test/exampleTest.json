@@ -1,7 +1,7 @@
  {
   "pageId" : "240763399694585",
   "config": {
-    "stopOnError": true
+    "stopOnError": false
   },
   "tests" :
   [
@@ -18,6 +18,14 @@
       "question" : "Coucou !",
       "responses" : [
         "Bonjour, que puis-je faire pour t'aider ? Si tu veux plus d'informations visite ce site http://talk-to-my-car.com"
+      ]
+    },
+    {
+      "testTitle" : "It should give me the consumption",
+      "question" : "Quelle est ta consommation ?",
+      "responses" : [
+        "🚗 Ma consommation est de %% L aux 100km",
+        "Oups j'ai bugué ! Signal non disponible"
       ]
     }
 

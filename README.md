@@ -40,7 +40,7 @@ Celui-ci doit accepter un ensemble de tests à effectuer (sous la même forme qu
 
 Ce découpage a été choisi afin de pouvoir facilement rajouter de nouvelles façades vers d'autres plateformes (Slack, Cisco Spark, SMS, ...). Il suffit simplement de réécrire deux méthodes (une de connexion et une d'envoi/réception de message) afin de rajouter la compatibilité vers une nouvelle plateforme.
 
-De nombreux packages **npm** ont également été utilisés afin de ne pas réinventer la roue :
+Liste des dépendances **npm** du projet :
 - Bluebird : librairie permettant d'utiliser des 'promises' (système asynchrone) **[[1]](#référence)**
 - validator : librairie de validation de paramètres **[[2]](#référence)**
 - time : librairie de mesure de performance **[[3]](#référence)**
@@ -66,10 +66,12 @@ De nombreux packages **npm** ont également été utilisés afin de ne pas réin
     }
     sendMetrics() // Envois des métriques en db pour visualisation future
 ```
+![Workflow](http://img15.hostingpics.net/pics/710624flc.png)  
+
 
 ### Utilisation
 **TFC** s'utilise en ligne de commande actuellement.   
-Pour le lancer il suffit simplement d'avoir *NodeJs* installé et de lui fournir un fichier json comprenant la configuration et les différents tests à exécuter (un exemple est fourni dans le dépot Github dans le dossier test).  
+Pour le lancer il suffit simplement d'avoir *NodeJs* installé et de lui fournir un fichier json comprenant la configuration et les différents tests à exécuter (un exemple est fourni dans le dépot Github dans le dossier test). Pour toutes les variables contenues dans une réponse comme par exemple la consommation il suffit d'indiquer cette variable dans le texte de réponse par `%%` pour ne pas réaliser la comparaison de cette partie de phrase. 
 
 ```
     git clone https://github.com/Oupsla/TFC
@@ -81,30 +83,30 @@ Afin de faciliter son utilisation un manuel est facilement accessible `node inde
 ![Help](http://img11.hostingpics.net/pics/682992Capturedu20170211132912.png)  
 
 
-
 Concernant la visualisation, celle-ci s'effectue en passant le paramètre `-m` en lançant le système et affiche un graphique dans la console. Celui-ci permet de visualiser les performances de toutes les questions ou de chaque test en particulier.  
-![Monitor](http://img11.hostingpics.net/pics/586372Capturedu20170211132547.png)  
+![Monitor](http://img15.hostingpics.net/pics/959972grape.png)  
 
 ## Evaluation
-L'évaluation de **TFC** s'est réalisée contre un véritable chatbot : TalkToMyCar (http://bnjjj.me/talk-to-my-car-website/). Celui-ci est un chatbot proposant de pouvoir dialoguer avec sa voiture afin de lui demander plusieurs choses :
+L'évaluation de **TFC** s'est réalisée avec un véritable chatbot utilisé en production (environ 200 utilisateurs) : [Talk To My Car](http://talk-to-my-car.com). Celui-ci est un chatbot proposant de pouvoir dialoguer avec sa voiture afin de lui poser plusieurs questions :
 - Connaître sa position
 - Son niveau de carburant
 - Son état général
 - ...
 
-Une série de tests ont été écrits afin de vérifier le réèl intérêt de **TFC** par rapport à TalkToMyCar.
+Une série de tests a été écrite afin de vérifier le réèl intérêt de **TFC** dans un cas d'utilisation concernant un chatbot en production (`talk to my car` dans ce cas).
 
 ### Efficacité
-**TFC** a permis à l'auteur de TalkToMyCar de pouvoir améliorer certaines parties de son chatbot en testant différents paramétrages pour les mêmes questions.  
-Il a ainsi pu découvrir quelles requêtes prennaient le plus de temps afin de les améliorer.  
+**TFC** a permis à l'auteur de `Talk to my car` de pouvoir améliorer certaines parties de son chatbot en testant différents paramétrages pour les mêmes questions.  
+Il a ainsi pu découvrir quelles requêtes prenaient le plus de temps afin de les améliorer mais aussi si en fonction des différentes version qu'il développe si la rapidité de réponses augmente ou diminue. Il a pu de cette manière décelé des mauvaises pratiques de programmation qu'il réalisait et qui allongeait le temps de réponse de son système.  
 
-Autre point important il a pu remarqué que le problème n'était pas toujours dû à son système mais à l'API de XEE qu'il utilise afin de questionner sa voiture. Celle-ci tombait parfois en panne et il a pu ainsi mettre en place un système prévenant l'utilisateur de l'indisponibilité de TalkToMyCar.
+Autre point important il a pu remarqué que le problème n'était pas toujours dû à son système mais à une API tierce qu'il utilise afin de questionner sa voiture. Celle-ci tombait parfois en panne et de cette façon il a pu ainsi mettre en place un système prévenant l'utilisateur de l'indisponibilité de `Talk to my car`.
+
 ### Complexité
 La décomposition du code a été mis à l'honneur dans ce projet !
-Cette décomposition a permis de développer plus facilement et de pouvoir rajouter des fonctionnalités sans problème. Elle permet également comme expliquer précédemment de pouvoir rajouter aisément de nouvelles connections vers d'autres plateformes de chatbots grâce à l'utilisation du pattern *Facade* afin d'abstraire les appels externes.
+Cette décomposition a permis de développer plus facilement et de pouvoir rajouter des fonctionnalités plus rapidement. Elle permet également comme expliqué précédemment, de pouvoir rajouter aisément de nouvelles connections vers d'autres plateformes de chatbots grâce à l'utilisation du pattern *Facade* afin d'abstraire les appels externes.
 
 ### Facilité d'utilisation
-**TFC** est très facilement utilisable. Comme dit précédemment il suffit d'avoir *NodeJs* installé et en 2-3 lignes de commande, le framework est disponible.
+**TFC** est très facile à prendre en main. Comme dit précédemment il suffit d'avoir *NodeJs* installé et en 2-3 lignes de commande, le framework est disponible.
 L'utilisation d'un fichier JSON pour configurer les tests est aussi un gros avantage et permet à tout à chacun de modifier/ajouter/supprimer des tests aisément.
 
 ## Limitation
