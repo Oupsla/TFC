@@ -4,11 +4,11 @@ const config = {
     port: process.env.PORT || 8080
   },
   facebook: {
-    login: process.env.FACEBOOK_LOGIN || 'opl.testframework@gmail.com',
-    password: process.env.FACEBOOK_PASSWORD || 'iagl4242',
+    login: process.env.FACEBOOK_LOGIN,
+    password: process.env.FACEBOOK_PASSWORD,
   },
   mongo: {
-    url: 'mongodb://dev:dev@ds035059.mlab.com:35059/tfc'
+    url: 'mongodb://' + process.env.DBUSER + ':' +  process.env.DBPASS + '@ds035059.mlab.com:35059/tfc'
   }
 };
 
