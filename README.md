@@ -1,6 +1,9 @@
+[![Build Status](https://travis-ci.org/Oupsla/TFC.svg?branch=master)](https://travis-ci.org/Oupsla/TFC)
+
+
 ![Test Framework Chatbot](http://img11.hostingpics.net/pics/326731LogoTfc.png)  
 
-[![Build Status](https://travis-ci.org/Oupsla/TFC.svg?branch=master)](https://travis-ci.org/Oupsla/TFC)
+
 
 ## Auteurs
 Benjamin Coenen - Nicolas Delperdange
